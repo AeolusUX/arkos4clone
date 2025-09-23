@@ -18,13 +18,16 @@ ALIASES = {
     "r36ultra": "GameConsole R36Ultra",
     "rx6h": "GameConsole RX6H",
     "k36s": "GameConsole K36S | GameConsole R36T",
+    "r46h": "GameConsole R46H",
+    "r36splus": "GameConsole R36sPlus",
     "origin r36s panel 0": "GameConsole R36s Panel 0",
     "origin r36s panel 1": "GameConsole R36s Panel 1",
     "origin r36s panel 2": "GameConsole R36s Panel 2",
     "origin r36s panel 3": "GameConsole R36s Panel 3",
     "origin r36s panel 4": "GameConsole R36s Panel 4",
     "origin r36s panel 5": "GameConsole R36s Panel 5",
-    "ymc a10mini": "YMC A10MINI",
+    "a10mini": "YMC A10MINI",
+    "g80cambv12": "R36S Clone G80camb v1.2",
 }
 
 # 2) 排除规则（glob 通配，多条规则其一匹配即排除）
@@ -49,13 +52,16 @@ EXTRA_COPY_MAP = {
     "k36s": ["logo/480P/", "kenrel/common/"],
     "hg36": ["logo/480p/", "kenrel/common/"],
     "rx6h": ["logo/480p/", "kenrel/common/"],
+    "r46h": ["logo/768p/", "kenrel/common/"],
+    "r36splus": ["logo/720p/", "kenrel/common/"],
     "origin r36s panel 0": ["logo/480P/", "kenrel/common/"],
     "origin r36s panel 1": ["logo/480P/", "kenrel/common/"],
     "origin r36s panel 2": ["logo/480P/", "kenrel/common/"],
     "origin r36s panel 3": ["logo/480P/", "kenrel/common/"],
     "origin r36s panel 4": ["logo/480P/", "kenrel/common/"],
     "origin r36s panel 5": ["logo/480P/", "kenrel/panel5/"],
-    "ymc a10mini": ["logo/480P/", "kenrel/common/"],
+    "a10mini": ["logo/480P/", "kenrel/common/"],
+    "g80cambv12": ["logo/480P/", "kenrel/common/"],
 
     # 示例：选中 mymini 时，从绝对路径再拼一份内容（按需修改/删除）
     # "mymini": ["/absolute/path/to/extra_stuff"],
@@ -211,10 +217,10 @@ def clean_destination(dst_dir):
     """
     清理目标目录：删除 .dtb / .ini 文件（仅顶层），并删除 BMPs 文件夹。
     """
-    print("\n🧽 Cleaning destination directory...")
+    # print("\n🧽 Cleaning destination directory...")
     removed_files = remove_files_by_ext(dst_dir, {".dtb", ".ini", ".orig", ".tony"})
-    bmps_removed = remove_dir_if_exists(os.path.join(dst_dir, "BMPs"))
-    print(f"✨ Cleaned. Removed files: {removed_files}, removed BMPs: {bmps_removed}")
+    # bmps_removed = remove_dir_if_exists(os.path.join(dst_dir, "BMPs"))
+    # print(f"✨ Cleaned. Removed files: {removed_files}, removed BMPs: {bmps_removed}")
 
 def resolve_extra_source(consoles_dir, path_str):
     """
@@ -235,16 +241,16 @@ def copy_with_extras(selected_real_name, consoles_dir, dst_dir):
 
     # 1) 复制选中目录
     selected_src = os.path.join(consoles_dir, selected_real_name)
-    print("📂 Copying selected folder (overwrite existing files)...")
+    # print("📂 Copying selected folder (overwrite existing files)...")
     f1, d1 = copy_all_contents(selected_src, dst_dir)
     total_files += f1
     total_dirs += d1
-    print(f"✅ Selected copied: files={f1}, dirs={d1}")
+    # print(f"✅ Selected copied: files={f1}, dirs={d1}")
 
     # 2) 复制额外来源（如果配置了）
     extras = EXTRA_COPY_MAP.get(selected_real_name, [])
     if extras:
-        print("\n➕ Copying extra mapped sources:")
+        # print("\n➕ Copying extra mapped sources:")
         for p in extras:
             src_path = resolve_extra_source(consoles_dir, p)
             if not os.path.isdir(src_path):
@@ -284,17 +290,46 @@ def choose_folder_and_copy(items, consoles_dir):
             dst_dir = get_base_dir()
 
             print(f"\n✅ You chose: {display}  (folder: {real})")
-            print(f"Source: {src_dir}")
-            print(f"Destination (script/exe directory): {dst_dir}")
+            # print(f"Source: {src_dir}")
+            # print(f"Destination (script/exe directory): {dst_dir}")
 
             # 先清理，再复制
             clean_destination(dst_dir)
 
             total_files, total_dirs = copy_with_extras(real, consoles_dir, dst_dir)
-            print(f"\n✨ Done! Total files copied: {total_files}, directories created/merged: {total_dirs}.")
+            # print(f"\n✨ Done! Total files copied: {total_files}, directories created/merged: {total_dirs}.")
+            # ✅ 复制完成后询问语言并按需创建 .cn
+            os.system("cls" if os.name == "nt" else "clear")
+            choose_language_and_mark(dst_dir)
             return
         else:
             print("⚠️ Number out of range, try again.")
+
+def choose_language_and_mark(dst_dir):
+    """
+    选择语言：英文不动；中文则在目标目录创建一个 .cn 文件作为标记。
+    非交互环境下直接跳过。
+    """
+    if not sys.stdin.isatty():
+        return
+
+    print("\n🌐 选择语言 / Language")
+    print("1) English (默认 / default)")
+    print("2) 中文")
+    sel = input("Enter 1 or 2 [1]: ").strip().lower()
+
+    if sel in {"2", "zh", "cn", "chinese", "中文", "汉语"}:
+        marker = os.path.join(dst_dir, ".cn")
+        try:
+            # 创建空文件；已存在则保持不变
+            with open(marker, "a", encoding="utf-8"):
+                pass
+            # print(f"✅ 已选择中文，已创建标记文件: {marker}")
+        except Exception as e:
+            print(f"⚠️ 创建 {marker} 失败: {e}")
+    # else:
+        # print("✓ English selected; no changes made.")
+
 
 def main():
     consoles_dir = get_consoles_dir()

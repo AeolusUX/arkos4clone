@@ -61,7 +61,7 @@ elif [ -f "/boot/rk3326-gameforce-linux.dtb" ]; then
 DEVICENAME="RG351MP"
 elif [ -f "/boot/rk3326-odroidgo2-linux.dtb" ] || [ -f "/boot/rk3326-odroidgo2-linux-v11.dtb" ] || [ -f "/boot/rk3326-odroidgo3-linux.dtb" ]; then
 DEVICENAME="RGB10"
-elif [ -f "/boot/rk3326-r36max-linux.dtb" ] || [ -f "/boot/rk3326-r36ultra-linux.dtb" ] || [ -f "/boot/rk3326-xf40h-linux.dtb" ] || [ -f "/boot/rk3326-xf40v-linux.dtb" ] || [ -f "/boot/rk3326-dc40v-linux.dtb" ]; then
+elif [ -f "/boot/.console" ]; then
 DEVICENAME="RG351MP"
 else
 DEVICENAME="RG351P"
@@ -121,7 +121,7 @@ elif [ -f "/boot/rk3326-gameforce-linux.dtb" ]; then
 DEVICENAME="RG351MP"
 elif [ -f "/boot/rk3326-odroidgo2-linux.dtb" ] || [ -f "/boot/rk3326-odroidgo2-linux-v11.dtb" ] || [ -f "/boot/rk3326-odroidgo3-linux.dtb" ]; then
 DEVICENAME="RGB10"
-elif [ -f "/boot/rk3326-r36max-linux.dtb" ] || [ -f "/boot/rk3326-r36ultra-linux.dtb" ] || [ -f "/boot/rk3326-xf40h-linux.dtb" ] || [ -f "/boot/rk3326-xf40v-linux.dtb" ] || [ -f "/boot/rk3326-dc40v-linux.dtb" ]; then
+elif [ -f "/boot/.console" ]; then
 DEVICENAME="RG351MP"
 else
 DEVICENAME="RG351P"

@@ -16,6 +16,7 @@ Currently, I can only maintain the devices I personally own, but contributions a
 - **K36S**
 - **RX6H**
 - **A10Mini**
+- **R36S Clone [G80CAMB v1.2 0422|0423]**
 - ...
 
 ## 设备捐赠

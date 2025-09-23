@@ -15,7 +15,7 @@ sudo mkdir -p "$MOUNT_DIR/boot/consoles"
 sudo rsync $RSYNC_BOOT_OPTS --exclude='files' ./consoles/ "$MOUNT_DIR/boot/consoles/"
 
 # 这些都是普通文件，直接复制即可
-sudo cp -f ./clone.sh ./dtb_selector.exe ./boot_dtb_tool.py ./expandtoexfat.sh "$MOUNT_DIR/boot/"
+sudo cp -f ./sh/clone.sh ./dtb_selector.exe ./boot_dtb_tool.py ./sh/expandtoexfat.sh ./sh/fix_audio.sh "$MOUNT_DIR/boot/"
 
 echo "== 注入按键信息 =="
 sudo mkdir -p "$MOUNT_DIR/root/home/ark/.quirks"
@@ -26,8 +26,8 @@ sudo chown -R 1002:1002 "$MOUNT_DIR/root/home/ark/.quirks/"
 
 echo "== 注入 clone 用配置 =="
 sudo mkdir -p "$MOUNT_DIR/root/opt/system/clone" "$MOUNT_DIR/root/usr/bin"
-sudo cp -f ./adjust-keys.sh ./joyled.sh "$MOUNT_DIR/root/opt/system/clone/"
-sudo cp -f ./mcu_led ./ws2812 "$MOUNT_DIR/root/usr/bin/"
+# sudo cp -f ./sh/adjust-keys.sh ./sh/joyled.sh "$MOUNT_DIR/root/opt/system/clone/"
+sudo cp -f ./bin/mcu_led ./bin/ws2812 "$MOUNT_DIR/root/usr/bin/"
 sudo chown -f 1002:1002 "$MOUNT_DIR/root/usr/bin/ws2812" || true
 sudo chown -f 1002:1002 "$MOUNT_DIR/root/usr/bin/mcu_led" || true
 sudo chown -R 1002:1002 "$MOUNT_DIR/root/opt/system/clone"
@@ -38,8 +38,8 @@ echo "== 注入 915 驱动 =="
 sudo mkdir -p "$MOUNT_DIR/root/usr/lib/firmware" \
              "$MOUNT_DIR/root/usr/lib/modules/4.4.189/kernel/drivers/net/wireless"
 # 通配符不存在会让 cp 失败，加 || true 容错
-sudo cp -f ./rk915_*.bin "$MOUNT_DIR/root/usr/lib/firmware/" 2>/dev/null || true
-sudo cp -f ./rk915.ko "$MOUNT_DIR/root/usr/lib/modules/4.4.189/kernel/drivers/net/wireless/" 2>/dev/null || true
+sudo cp -f ./bin/rk915_*.bin "$MOUNT_DIR/root/usr/lib/firmware/" 2>/dev/null || true
+sudo cp -f ./bin/rk915.ko "$MOUNT_DIR/root/usr/lib/modules/4.4.189/kernel/drivers/net/wireless/" 2>/dev/null || true
 sudo chmod 755 "$MOUNT_DIR/root/usr/lib/modules/4.4.189/kernel/drivers/net/wireless/rk915.ko" 2>/dev/null || true
 sudo chmod 755 "$MOUNT_DIR/root/usr/lib/firmware/"rk915_*.bin 2>/dev/null || true
 
@@ -48,9 +48,9 @@ sudo mkdir -p "$MOUNT_DIR/root/opt/351Files/res"
 # 这里 res/* 是多个“目录”，必须 -r
 sudo cp -r ./res/* "$MOUNT_DIR/root/opt/351Files/res/" 2>/dev/null || true
 
-# 重命名 351Files -> 351Files.r36s（存在才动）
+# 重命名 351Files -> 351Files.old（存在才动）
 if [[ -e "$MOUNT_DIR/root/opt/351Files/351Files" ]]; then
-  sudo mv "$MOUNT_DIR/root/opt/351Files/351Files" "$MOUNT_DIR/root/opt/351Files/351Files.r36s"
+  sudo mv "$MOUNT_DIR/root/opt/351Files/351Files" "$MOUNT_DIR/root/opt/351Files/351Files.old"
 else
   echo "[warn] 未找到 $MOUNT_DIR/root/opt/351Files/351Files，跳过重命名"
 fi
@@ -64,27 +64,49 @@ sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/atomiswave.sh" 2>/dev/null |
 sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/dreamcast.sh" 2>/dev/null || true
 sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/naomi.sh" 2>/dev/null || true
 sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/saturn.sh" 2>/dev/null || true
+sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/n64.sh" 2>/dev/null || true
+sudo chown root:root "$MOUNT_DIR/root/usr/local/bin/pico8.sh" 2>/dev/null || true
 sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/atomiswave.sh" 2>/dev/null || true
 sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/dreamcast.sh" 2>/dev/null || true
 sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/naomi.sh" 2>/dev/null || true
 sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/saturn.sh" 2>/dev/null || true
+sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/n64.sh" 2>/dev/null || true
+sudo chmod 777 "$MOUNT_DIR/root/usr/local/bin/pico8.sh" 2>/dev/null || true
 
+echo "== 注入核心 =="
+sudo cp -f ./mod_so/64/* "$MOUNT_DIR/root/home/ark/.config/retroarch/cores/"
+sudo cp -f ./mod_so/32/* "$MOUNT_DIR/root/home/ark/.config/retroarch/cores/"
+sudo chown -R 1002:1002 $MOUNT_DIR/root/home/ark/.config/retroarch/cores/*
+sudo chown -R 1002:1002 $MOUNT_DIR/root/home/ark/.config/retroarch32/cores/*
+sudo cp -f ./replace_file/es_systems.cfg "$MOUNT_DIR/root/etc/emulationstation/"
+sudo chmod 777 "$MOUNT_DIR/root/etc/emulationstation/es_systems.cfg" 2>/dev/null || true
+sudo cp -f ./replace_file/emulationstation2.po "$MOUNT_DIR/root/usr/bin/emulationstation/resources/locale/zh-CN/"
+
+echo "== 注入 portmaster =="
+sudo cp -rf ./PortMaster/* "$MOUNT_DIR/root/opt/system/Tools/PortMaster/"
 
 echo "== 复制 roms.tar 出来操作 =="
 sudo cp "$MOUNT_DIR/root/roms.tar" /home/lcdyk/arkos/
 mkdir -p /home/lcdyk/arkos/tmproms
 tar -xf /home/lcdyk/arkos/roms.tar -C /home/lcdyk/arkos/tmproms
-mkdir -p /home/lcdyk/arkos/tmproms/roms/ports
-cp -f Install.Full.PortMaster.sh /home/lcdyk/arkos/tmproms/roms/ports/
-cp -rf libs /home/lcdyk/arkos/tmproms/roms/ports/
-chmod +x /home/lcdyk/arkos/tmproms/roms/ports/Install.Full.PortMaster.sh
-tar -cf /home/lcdyk/arkos/roms.tar -C /home/lcdyk/arkos/tmproms .
+mkdir -p /home/lcdyk/arkos/tmproms/roms/hbmame
+tar -xf zulu11.48.21-ca-jdk11.0.11-linux_aarch64.tar.gz -C /home/lcdyk/arkos/tmproms/roms/j2me
+mv /home/lcdyk/arkos/tmproms/roms/j2me/zulu11.48.21-ca-jdk11.0.11-linux_aarch64 /home/lcdyk/arkos/tmproms/roms/j2me/jdk
+sudo tar -cf /home/lcdyk/arkos/roms.tar -C /home/lcdyk/arkos/tmproms .
 rm -rf /home/lcdyk/arkos/tmproms
 sudo cp /home/lcdyk/arkos/roms.tar "$MOUNT_DIR/root/"
 sudo chmod -R 755 $MOUNT_DIR/root/roms.tar
+sudo rm -rf /home/lcdyk/arkos/roms.tar
 
 echo "== ogage快捷键复制 =="
 sudo cp -r ./replace_file/ogage "$MOUNT_DIR/root/usr/local/bin/"
 sudo cp -r ./replace_file/ogage "$MOUNT_DIR/root/home/ark/.quirks/"
+
+echo "== 删除不需要的文件 =="
+sudo rm -rf "$MOUNT_DIR/boot/BMPs"
+sudo rm -rf "$MOUNT_DIR/boot/ScreenFiles"
+sudo rm -rf "$MOUNT_DIR/boot/boot.ini" "$MOUNT_DIR/boot/*.dtb" "$MOUNT_DIR/boot/*.orig" "$MOUNT_DIR/boot/*.tony"
+sed -i -E '/^title=.*\([^()]*\)\([^()]*\)$/ s/$/(kk\&lcdyk)/' "$MOUNT_DIR/root/usr/share/plymouth/themes/text.plymouth"
+sed -i -E 's/^(title=.*\([^()]*\)\([^()]*\)\()[^()]*(\))$/\1kk\&lcdyk\2/' "$MOUNT_DIR/root/usr/share/plymouth/themes/text.plymouth"
 
 echo "== 完成 =="
