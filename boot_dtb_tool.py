@@ -29,6 +29,7 @@ ALIASES = {
     "a10mini": "YMC A10MINI",
     "g80cambv12": "R36S Clone G80camb v1.2",
     "r36s v20 719m": "R36S Clone V2.0 719M",
+    "k36p7": "K36 Panel 7",
 }
 
 # 2) 排除规则（glob 通配，多条规则其一匹配即排除）
@@ -64,7 +65,7 @@ EXTRA_COPY_MAP = {
     "a10mini": ["logo/480P/", "kenrel/common/"],
     "g80cambv12": ["logo/480P/", "kenrel/common/"],
     "r36s v20 719m": ["logo/480P/", "kenrel/common/"],
-
+    "k36p7": ["logo/480P/", "kenrel/common/"],
     # 示例：选中 mymini 时，从绝对路径再拼一份内容（按需修改/删除）
     # "mymini": ["/absolute/path/to/extra_stuff"],
 
