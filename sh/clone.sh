@@ -31,6 +31,7 @@ declare -A dtb2label=(
   [rk3326-g80cambv12-linux.dtb]=g80cambv12
   [rk3326-r46h-linux.dtb]=r46h
   [rk3326-r36plus-linux.dtb]=r36splus
+  [rk3326-r36sclonev20-linux.dtb]=clone719m
 )
 declare -A console_profile=(
   [r36s]=480p
@@ -47,6 +48,7 @@ declare -A console_profile=(
   [g80cambv12]=480p
   [r46h]=768p
   [r36splus]=720p
+  [clone719m]=480p
 )
 declare -A ogage_conf_map=(
   [r36s]=happy5
@@ -63,6 +65,7 @@ declare -A ogage_conf_map=(
   [g80cambv12]=happy5
   [r46h]=select
   [r36splus]=happy5
+  [clone719m]=happy5
   # 按需增删：  [机型]=select|mode
 )
 rk915_set=("xf40h" "xf40v" "xf35h" "r36ultra" "k36s")   # 按需增删
