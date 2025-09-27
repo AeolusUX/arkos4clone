@@ -11,19 +11,12 @@ Currently, I can only maintain the devices I personally own, but contributions a
 - **R36Pro** / **K36 PANEL1**
 - **R36Max**
 - **HG36**
-- **R36Ultra**[Only V1 is supported.https://github.com/Vi-K36/EE-Clones-DTB/tree/main/R36%20Ultra%20(emmc)/Stock]
+- **R36Ultra**[[Only V1 is supported.](https://github.com/Vi-K36/EE-Clones-DTB/tree/main/R36%20Ultra%20(emmc)/Stock)]
 - **R36T**
 - **K36S**
 - **RX6H**
 - **A10Mini**
 - **R36S Clone [G80CAMB v1.2 0422|0423]**
-- ...
-
-## 设备捐赠
-
-​	目前只接受厂家捐赠设备，不接受玩家的捐赠，也暂时不接受其他非设备捐赠
-
-​	移植单纯是爱好，捐赠设备联系QQ：2670878301，注明来意
 
 ## What We Did
 
@@ -34,7 +27,7 @@ To make ArkOS work on clone devices, the following changes and adaptations were 
 2. **DTS reverse-porting for compatibility**
    - The DTS files were **reverse-ported from the 5.10 kernel to the 4.4 kernel** to ensure proper hardware support.
    - Reference: [AveyondFly/rocknix_dts](https://github.com/AveyondFly/rocknix_dts/tree/main/3326/arkos_4.4_dts)
-3. - **U-Boot DTS adjustments for aeux-maintained ArkOS**
+3. - **Built on the ArkOS distribution maintained by AeolusUX**
      - Reference repo: [AeolusUX/ArkOS-R3XS](https://github.com/AeolusUX/ArkOS-R3XS)
 4. - **351Files GitHub repo**
      - Reference repo: [lcdyk0517/351Files](https://github.com/lcdyk0517/351Files)

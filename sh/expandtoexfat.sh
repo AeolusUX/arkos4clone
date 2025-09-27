@@ -90,8 +90,7 @@ if [ $exitcode -eq 0 ]; then
   dialog --colors --infobox \
   "Clone adjustment completed. The system will now reboot.  
 
-  \Z1\ZbNote:\Zn On the first boot, PortMaster will install some dependencies. This may take a few minutes, so please be patient.  
-  After the first boot, please run \Z3/ports/Install.Full.PortMaster.sh\Zn." \
+  \Z1\ZbNote:\Zn On the first boot, PortMaster will install some dependencies. This may take a few minutes, so please be patient." \
   $height $width 2>&1 > /dev/tty1 | sleep 10
   reboot
 else
